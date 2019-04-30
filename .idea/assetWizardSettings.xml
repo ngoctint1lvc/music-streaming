@@ -19,8 +19,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="$USER_HOME$/Desktop/android-firebase-chat/RivChat/app/src/main/res/drawable/ic_float_button.png" />
-                                      <entry key="outputName" value="ic_float_button" />
+                                      <entry key="imageAsset" value="$USER_HOME$/Desktop/android-firebase-chat/RivChat/app/src/main/res/drawable/ic_person_low.png" />
+                                      <entry key="outputName" value="ic_person_low" />
                                     </map>
                                   </option>
                                 </PersistentState>
