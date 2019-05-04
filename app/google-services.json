@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "859458704577",
+    "firebase_url": "https://music-streaming-dccdf.firebaseio.com",
+    "project_id": "music-streaming-dccdf",
+    "storage_bucket": "music-streaming-dccdf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859458704577:android:6eff3c6b49707d60",
+        "android_client_info": {
+          "package_name": "com.example.ngoctin.musicstreaming"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "859458704577-fmvrl9fpo0r7e9dai7vum93fkk6qgt2s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ngoctin.musicstreaming",
+            "certificate_hash": "deee5baa413f07504eaddc94bf988226dae99ebf"
+          }
+        },
+        {
+          "client_id": "859458704577-75g5kqsin9ga5j0rk65phe8uitd0e48h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0ryXUHwtNPMUqJGqdQpwtcSLXjEDh-3o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "859458704577-75g5kqsin9ga5j0rk65phe8uitd0e48h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

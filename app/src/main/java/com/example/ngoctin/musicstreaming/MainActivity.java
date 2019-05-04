@@ -1,6 +1,8 @@
 package com.example.ngoctin.musicstreaming;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -10,11 +12,15 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
+import com.example.ngoctin.musicstreaming.data.StaticConfig;
 import com.example.ngoctin.musicstreaming.ui.FriendsFragment;
 import com.example.ngoctin.musicstreaming.ui.GroupFragment;
 import com.example.ngoctin.musicstreaming.ui.UserProfileFragment;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +36,10 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton floatButton;
     private ViewPagerAdapter adapter;
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         int[] tabIcons = {
                 R.drawable.ic_tab_person,
                 R.drawable.ic_tab_group,
-                R.drawable.ic_tab_infor
+                R.drawable.ic_tab_info
         };
 
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
@@ -89,13 +99,15 @@ public class MainActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
 //                ServiceUtils.stopServiceFriendChat(MainActivity.this.getApplicationContext(), false);
                 if (adapter.getItem(position) instanceof FriendsFragment) {
-                    floatButton.show();
                     floatButton.setOnClickListener(((FriendsFragment) adapter.getItem(position)).onClickFloatButton.getInstance(MainActivity.this));
+                    floatButton.hide();
                     floatButton.setImageResource(R.drawable.plus);
-                } else if (adapter.getItem(position) instanceof GroupFragment) {
                     floatButton.show();
+                } else if (adapter.getItem(position) instanceof GroupFragment) {
 //                    floatButton.setOnClickListener(((GroupFragment) adapter.getItem(position)).onClickFloatButton.getInstance(MainActivity.this));
+                    floatButton.hide();
                     floatButton.setImageResource(R.drawable.ic_float_add_group);
+                    floatButton.show();
                 } else {
                     floatButton.hide();
                 }
@@ -133,8 +145,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-
-            // return null to display only the icon
             return null;
         }
     }
