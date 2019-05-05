@@ -220,7 +220,7 @@ public class UserProfileFragment extends Fragment {
                         FirebaseAuth.getInstance().signOut();
                         FriendDB.getInstance(getContext()).dropDB();
                         GroupDB.getInstance(getContext()).dropDB();
-                        ServiceUtils.stopServiceFriendChat(getContext().getApplicationContext(), true);
+                        ServiceUtils.stopServiceFriendChat(getContext().getApplicationContext());
                         getActivity().finish();
                     }
 

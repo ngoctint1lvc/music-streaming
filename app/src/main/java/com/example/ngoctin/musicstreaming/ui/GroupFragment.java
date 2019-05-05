@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -74,14 +73,15 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         View layout = inflater.inflate(R.layout.fragment_group, container, false);
 
         listGroup = GroupDB.getInstance(getContext()).getListGroups();
-        recyclerListGroups = (RecyclerView) layout.findViewById(R.id.recycleListGroup);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) layout.findViewById(R.id.swipeRefreshLayout);
+        recyclerListGroups = layout.findViewById(R.id.recycleListGroup);
+        mSwipeRefreshLayout = layout.findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         recyclerListGroups.setLayoutManager(layoutManager);
         adapter = new ListGroupsAdapter(getContext(), listGroup);
         recyclerListGroups.setAdapter(adapter);
         onClickFloatButton = new FragGroupClickFloatButton();
+
         progressDialog = new LovelyProgressDialog(getContext())
         .setCancelable(false)
         .setIcon(R.drawable.ic_dialog_delete_group)
@@ -401,7 +401,7 @@ class ListGroupsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra(StaticConfig.INTENT_KEY_CHAT_FRIEND, groupName);
-                ArrayList<CharSequence> idFriend = new ArrayList<>();
+                ArrayList<CharSequence> idFriend = new ArrayList<CharSequence>();
                 ChatActivity.bitmapAvataFriend = new HashMap<>();
                 for(String id : listGroup.get(position).member) {
                     idFriend.add(id);
@@ -431,6 +431,7 @@ class ListGroupsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 class ItemGroupViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
     public TextView iconGroup, txtGroupName;
     public ImageButton btnMore;
+
     public ItemGroupViewHolder(View itemView) {
         super(itemView);
         itemView.setOnCreateContextMenuListener(this);

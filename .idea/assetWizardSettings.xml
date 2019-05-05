@@ -16,11 +16,27 @@
                             <entry key="actionbar">
                               <value>
                                 <PersistentState>
+                                  <option name="children">
+                                    <map>
+                                      <entry key="clipartAsset">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="url" value="jar:file:/opt/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/notification/ic_live_tv_black_24dp.xml" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                    </map>
+                                  </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="assetType" value="IMAGE" />
                                       <entry key="imageAsset" value="$USER_HOME$/Desktop/android-firebase-chat/RivChat/app/src/main/res/drawable/bg.png" />
-                                      <entry key="outputName" value="bg" />
+                                      <entry key="outputName" value="ic_action_music_search" />
+                                      <entry key="theme" value="CUSTOM" />
+                                      <entry key="themeColor" value="fffbf9" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -43,12 +59,38 @@
                             <entry key="launcherLegacy">
                               <value>
                                 <PersistentState>
+                                  <option name="children">
+                                    <map>
+                                      <entry key="clipArt">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="color" value="be160e" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                      <entry key="clipartAsset">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="url" value="jar:file:/opt/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/image/ic_music_note_black_24dp.xml" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                    </map>
+                                  </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="assetType" value="IMAGE" />
-                                      <entry key="iconShape" value="NONE" />
+                                      <entry key="backgroundColor" value="27a2be" />
+                                      <entry key="dogEared" value="true" />
                                       <entry key="imageAsset" value="$USER_HOME$/Desktop/android-firebase-chat/RivChat/app/src/main/res/mipmap-xxxhdpi/ic_power_settings.png" />
-                                      <entry key="outputName" value="ic_power_settings" />
+                                      <entry key="outputName" value="ic_action_search_music" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -58,7 +100,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
+                            <entry key="outputIconType" value="ACTIONBAR" />
                           </map>
                         </option>
                       </PersistentState>

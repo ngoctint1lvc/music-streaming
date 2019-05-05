@@ -38,6 +38,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.2.1'
     implementation 'com.google.firebase:firebase-database:16.1.0'
     implementation 'de.hdodenhof:circleimageview:2.1.0'
+    implementation('com.google.apis:google-api-services-youtube:v3-rev192-1.23.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 }
 
 apply plugin: 'com.google.gms.google-services'

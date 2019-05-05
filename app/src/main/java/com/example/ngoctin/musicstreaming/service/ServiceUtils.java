@@ -35,7 +35,7 @@ public class ServiceUtils {
         return false;
     }
 
-    public static void stopServiceFriendChat(Context context, final boolean kill) {
+    public static void stopServiceFriendChat(Context context) {
         if (isServiceFriendChatRunning(context)) {
             Intent intent = new Intent(context, FriendChatService.class);
             if (connectionServiceFriendChatForDestroy != null) {
@@ -90,8 +90,7 @@ public class ServiceUtils {
             }
             connectionServiceFriendChatForStart = new ServiceConnection() {
                 @Override
-                public void onServiceConnected(ComponentName className,
-                                               IBinder service) {
+                public void onServiceConnected(ComponentName className, IBinder service) {
                     FriendChatService.LocalBinder binder = (FriendChatService.LocalBinder) service;
                     for (Friend friend : binder.getService().listFriend.getListFriend()) {
                         binder.getService().mapMark.put(friend.idRoom, true);

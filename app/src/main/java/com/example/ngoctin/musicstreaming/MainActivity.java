@@ -1,6 +1,5 @@
 package com.example.ngoctin.musicstreaming;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -12,7 +11,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -32,12 +30,14 @@ public class MainActivity extends AppCompatActivity {
     private static String TAG = "MainActivity";
     private ViewPager viewPager;
     private TabLayout tabLayout = null;
+
     public static String STR_FRIEND_FRAGMENT = "FRIEND";
     public static String STR_GROUP_FRAGMENT = "GROUP";
     public static String STR_INFO_FRAGMENT = "INFO";
 
     private FloatingActionButton floatButton;
     private ViewPagerAdapter adapter;
+    private Toolbar toolbar;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         if(toolbar != null) {
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle("Music Streaming");
@@ -70,9 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     StaticConfig.UID = user.getUid();
                 } else {
                     MainActivity.this.finish();
-                    // User is signed in
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
             }
         };
@@ -83,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
-        ServiceUtils.stopServiceFriendChat(getApplicationContext(), false);
+        ServiceUtils.startServiceFriendChat(getApplicationContext());
     }
 
     @Override
@@ -96,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        ServiceUtils.startServiceFriendChat(getApplicationContext());
+        ServiceUtils.stopServiceFriendChat(getApplicationContext());
         super.onDestroy();
     }
 
@@ -107,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
         setupTabIcons();
     }
-
 
     private void setupTabIcons() {
         int[] tabIcons = {
@@ -137,21 +134,19 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                ServiceUtils.stopServiceFriendChat(MainActivity.this.getApplicationContext(), false);
+                ServiceUtils.stopServiceFriendChat(MainActivity.this.getApplicationContext());
+
                 if (adapter.getItem(position) instanceof FriendsFragment) {
-//                    floatButton.setVisibility(View.VISIBLE);
                     floatButton.hide();
                     floatButton.setOnClickListener(((FriendsFragment) adapter.getItem(position)).onClickFloatButton.getInstance(MainActivity.this));
                     floatButton.setImageResource(R.drawable.plus);
                     floatButton.show();
                 } else if (adapter.getItem(position) instanceof GroupFragment) {
-//                    floatButton.setVisibility(View.VISIBLE);
                     floatButton.hide();
                     floatButton.setOnClickListener(((GroupFragment) adapter.getItem(position)).onClickFloatButton.getInstance(MainActivity.this));
                     floatButton.setImageResource(R.drawable.ic_float_add_group);
                     floatButton.show();
                 } else {
-//                    floatButton.setVisibility(View.GONE);
                     floatButton.hide();
                 }
             }
@@ -165,24 +160,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.about) {
             Toast.makeText(this, "Music streaming version 1.0", Toast.LENGTH_LONG).show();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

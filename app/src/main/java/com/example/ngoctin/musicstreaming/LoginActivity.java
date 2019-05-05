@@ -141,6 +141,15 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
+    public void clickResetPassword(View view) {
+        String username = editTextUsername.getText().toString();
+        if (validate(username, ";")) {
+            authUtils.resetPassword(username);
+        } else {
+            Toast.makeText(this, "Invalid email", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     class AuthUtils {
         void signIn(String email, String password) {
             waitingDialog.setIcon(R.drawable.ic_person_low)
@@ -184,6 +193,56 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     waitingDialog.dismiss();
+                }
+            });
+        }
+
+        void resetPassword(final String email) {
+            mAuth.sendPasswordResetEmail(email)
+            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    new LovelyInfoDialog(LoginActivity.this) {
+                        @Override
+                        public LovelyInfoDialog setConfirmButtonText(String text) {
+                            findView(com.yarolegovich.lovelydialog.R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dismiss();
+                                }
+                            });
+                            return super.setConfirmButtonText(text);
+                        }
+                    }
+                            .setTopColorRes(R.color.colorPrimary)
+                            .setIcon(R.drawable.ic_pass_reset)
+                            .setTitle("Password Recovery")
+                            .setMessage("Sent email to " + email)
+                            .setConfirmButtonText("Ok")
+                            .show();
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    new LovelyInfoDialog(LoginActivity.this) {
+                        @Override
+                        public LovelyInfoDialog setConfirmButtonText(String text) {
+                            findView(com.yarolegovich.lovelydialog.R.id.ld_btn_confirm).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dismiss();
+                                }
+                            });
+                            return super.setConfirmButtonText(text);
+                        }
+                    }
+                            .setTopColorRes(R.color.colorAccent)
+                            .setIcon(R.drawable.ic_pass_reset)
+                            .setTitle("False")
+                            .setMessage("False to sent email to " + email)
+                            .setConfirmButtonText("Ok")
+                            .show();
                 }
             });
         }
