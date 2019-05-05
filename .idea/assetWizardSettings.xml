@@ -26,6 +26,20 @@
                                 </PersistentState>
                               </value>
                             </entry>
+                            <entry key="launcher">
+                              <value>
+                                <PersistentState>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="backgroundLayerName" value="ic_launcher_background" />
+                                      <entry key="foregroundImage" value="$USER_HOME$/Desktop/android-firebase-chat/RivChat/app/src/main/res/mipmap-xxxhdpi/ic_account_box.png" />
+                                      <entry key="foregroundLayerName" value="ic_launcher_foreground" />
+                                      <entry key="outputName" value="ic_account_box" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
                             <entry key="launcherLegacy">
                               <value>
                                 <PersistentState>
@@ -33,8 +47,8 @@
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
                                       <entry key="iconShape" value="NONE" />
-                                      <entry key="imageAsset" value="$USER_HOME$/Desktop/android-firebase-chat/RivChat/app/src/main/res/drawable/bg.png" />
-                                      <entry key="outputName" value="bg" />
+                                      <entry key="imageAsset" value="$USER_HOME$/Desktop/android-firebase-chat/RivChat/app/src/main/res/mipmap-xxxhdpi/ic_power_settings.png" />
+                                      <entry key="outputName" value="ic_power_settings" />
                                     </map>
                                   </option>
                                 </PersistentState>

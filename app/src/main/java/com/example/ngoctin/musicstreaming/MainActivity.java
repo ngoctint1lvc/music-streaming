@@ -13,9 +13,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.ngoctin.musicstreaming.data.StaticConfig;
+import com.example.ngoctin.musicstreaming.service.ServiceUtils;
 import com.example.ngoctin.musicstreaming.ui.FriendsFragment;
 import com.example.ngoctin.musicstreaming.ui.GroupFragment;
 import com.example.ngoctin.musicstreaming.ui.UserProfileFragment;
@@ -26,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
     private static String TAG = "MainActivity";
     private ViewPager viewPager;
     private TabLayout tabLayout = null;
@@ -52,18 +54,60 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Music Streaming");
         }
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        floatButton = (FloatingActionButton) findViewById(R.id.fab);
+        viewPager = findViewById(R.id.viewpager);
+        floatButton = findViewById(R.id.fab);
         initTab();
+        initFirebase();
+    }
+
+    private void initFirebase() {
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    StaticConfig.UID = user.getUid();
+                } else {
+                    MainActivity.this.finish();
+                    // User is signed in
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
+            }
+        };
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+        ServiceUtils.stopServiceFriendChat(getApplicationContext(), false);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        ServiceUtils.startServiceFriendChat(getApplicationContext());
+        super.onDestroy();
     }
 
     private void initTab() {
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = findViewById(R.id.tabs);
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorIndivateTab));
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
         setupTabIcons();
     }
+
 
     private void setupTabIcons() {
         int[] tabIcons = {
@@ -78,37 +122,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        // Add fragment to viewpager
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFrag(new FriendsFragment(), STR_FRIEND_FRAGMENT);
         adapter.addFrag(new GroupFragment(), STR_GROUP_FRAGMENT);
         adapter.addFrag(new UserProfileFragment(), STR_INFO_FRAGMENT);
         floatButton.setOnClickListener(((FriendsFragment) adapter.getItem(0)).onClickFloatButton.getInstance(this));
-
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(3);
-
-        // page change event
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int i, float v, int i1) {
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
             }
 
             @Override
             public void onPageSelected(int position) {
-//                ServiceUtils.stopServiceFriendChat(MainActivity.this.getApplicationContext(), false);
+                ServiceUtils.stopServiceFriendChat(MainActivity.this.getApplicationContext(), false);
                 if (adapter.getItem(position) instanceof FriendsFragment) {
-                    floatButton.setOnClickListener(((FriendsFragment) adapter.getItem(position)).onClickFloatButton.getInstance(MainActivity.this));
+//                    floatButton.setVisibility(View.VISIBLE);
                     floatButton.hide();
+                    floatButton.setOnClickListener(((FriendsFragment) adapter.getItem(position)).onClickFloatButton.getInstance(MainActivity.this));
                     floatButton.setImageResource(R.drawable.plus);
                     floatButton.show();
                 } else if (adapter.getItem(position) instanceof GroupFragment) {
-//                    floatButton.setOnClickListener(((GroupFragment) adapter.getItem(position)).onClickFloatButton.getInstance(MainActivity.this));
+//                    floatButton.setVisibility(View.VISIBLE);
                     floatButton.hide();
+                    floatButton.setOnClickListener(((GroupFragment) adapter.getItem(position)).onClickFloatButton.getInstance(MainActivity.this));
                     floatButton.setImageResource(R.drawable.ic_float_add_group);
                     floatButton.show();
                 } else {
+//                    floatButton.setVisibility(View.GONE);
                     floatButton.hide();
                 }
             }
@@ -119,6 +162,30 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.about) {
+            Toast.makeText(this, "Music streaming version 1.0", Toast.LENGTH_LONG).show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();

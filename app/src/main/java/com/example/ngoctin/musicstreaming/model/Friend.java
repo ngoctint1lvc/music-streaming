@@ -1,0 +1,6 @@
+package com.example.ngoctin.musicstreaming.model;
+
+public class Friend extends User{
+    public String id;
+    public String idRoom;
+}
