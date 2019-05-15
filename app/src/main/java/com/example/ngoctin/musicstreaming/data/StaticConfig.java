@@ -16,6 +16,9 @@ public class StaticConfig {
     public static String INTENT_KEY_CHAT_ROOM_ID = "roomid";
     public static long TIME_TO_REFRESH = 10 * 1000;
     public static long TIME_TO_OFFLINE = 2 * 60 * 1000;
+    public static int REQUEST_CODE_SEARCH_MUSIC = 1;
+    public static int RESULT_CODE_OK = 1;
+    public static int RESULT_CODE_FAIL = 2;
 }
 
 

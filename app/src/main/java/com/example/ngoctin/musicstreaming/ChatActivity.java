@@ -1,14 +1,19 @@
 package com.example.ngoctin.musicstreaming;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,18 +21,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.ngoctin.musicstreaming.data.SharedPreferenceHelper;
 import com.example.ngoctin.musicstreaming.data.StaticConfig;
 import com.example.ngoctin.musicstreaming.model.Conversation;
 import com.example.ngoctin.musicstreaming.model.Message;
+import com.example.ngoctin.musicstreaming.service.PlayerService;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayer;
+import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerView;
+import com.pierfrancescosoffritti.youtubeplayer.utils.YouTubePlayerStateTracker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,11 +57,22 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private LinearLayoutManager linearLayoutManager;
     public static HashMap<String, Bitmap> bitmapAvataFriend;
     public Bitmap bitmapAvataUser;
+    private ViewGroup youtubeViewGroup;
+    private ServiceConnection serviceConnection;
+    private PlayerService.PlayerServiceBinder playerServiceBinder;
+    private View playerView;
+    private YouTubePlayerView youtubePlayerView;
+    private boolean isPlayerServiceRunning = false;
+    private YouTubePlayerStateTracker tracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        setUpYoutubePlayer();
+
+        // Setup chat room
         Intent intentData = getIntent();
         idFriend = intentData.getCharSequenceArrayListExtra(StaticConfig.INTENT_KEY_CHAT_ID);
         roomId = intentData.getStringExtra(StaticConfig.INTENT_KEY_CHAT_ROOM_ID);
@@ -69,11 +90,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             bitmapAvataUser = null;
         }
 
-        editWriteMessage = (EditText) findViewById(R.id.editWriteMessage);
+        editWriteMessage = findViewById(R.id.editWriteMessage);
         if (idFriend != null && nameFriend != null) {
             getSupportActionBar().setTitle(nameFriend);
             linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-            recyclerChat = (RecyclerView) findViewById(R.id.recyclerChat);
+            recyclerChat = findViewById(R.id.recyclerChat);
             recyclerChat.setLayoutManager(linearLayoutManager);
             adapter = new ListMessageAdapter(this, consersation, bitmapAvataFriend, bitmapAvataUser);
             FirebaseDatabase.getInstance().getReference().child("message/" + roomId).addChildEventListener(new ChildEventListener() {
@@ -113,6 +134,71 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
             recyclerChat.setAdapter(adapter);
+
+            // Check
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    private void setUpYoutubePlayer() {
+        // setup youtube player view
+        youtubeViewGroup = findViewById(R.id.youtube_player);
+        serviceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                Log.d("Debug", "service connect");
+                playerServiceBinder = (PlayerService.PlayerServiceBinder) service;
+
+                playerView = playerServiceBinder.getPlayerView();
+                if (playerView.getParent() != null){
+                    ((ViewGroup)playerView.getParent()).removeView(playerView);
+                }
+                youtubeViewGroup.addView(playerView);
+
+                youtubePlayerView = playerView.findViewById(R.id.youtubePlayerView);
+                tracker = playerServiceBinder.getYoutubePlayerTracker();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                Log.d("Debug", "service disconnect");
+            }
+        };
+    }
+
+    private void startPlayerService(String videoId) {
+        if (isPlayerServiceRunning) stopPlayerService();
+        Intent playerIntent = new Intent(this, PlayerService.class);
+        playerIntent.putExtra("videoId", videoId);
+        startService(playerIntent);
+        bindService(playerIntent, serviceConnection, BIND_AUTO_CREATE);
+        isPlayerServiceRunning = true;
+    }
+
+    private void stopPlayerService() {
+        if (isPlayerServiceRunning) {
+            unbindService(serviceConnection);
+            youtubeViewGroup.removeView(playerView);
+            youtubePlayerView = null;
+            playerView = null;
+            playerServiceBinder = null;
+            stopService(new Intent(this, PlayerService.class));
+        }
+        isPlayerServiceRunning = false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == StaticConfig.REQUEST_CODE_SEARCH_MUSIC && resultCode == StaticConfig.RESULT_CODE_OK) {
+            if (data != null) {
+                String videoId = data.getStringExtra("videoId");
+                startPlayerService(videoId);
+            }
         }
     }
 
@@ -126,7 +212,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (item.getItemId() == R.id.search_music) {
             Intent searchMusic = new Intent(this, YoutubeActivity.class);
-            startActivity(searchMusic);
+            startActivityForResult(searchMusic, StaticConfig.REQUEST_CODE_SEARCH_MUSIC);
         }
         return true;
     }
@@ -143,6 +229,17 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         result.putExtra("idFriend", idFriend.get(0));
         setResult(RESULT_OK, result);
         this.finish();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (isPlayerServiceRunning) stopPlayerService();
+        super.onDestroy();
     }
 
     @Override
@@ -259,7 +356,7 @@ class ItemMessageFriendHolder extends RecyclerView.ViewHolder {
 
     public ItemMessageFriendHolder(View itemView) {
         super(itemView);
-        txtContent = (TextView) itemView.findViewById(R.id.textContentFriend);
-        avata = (CircleImageView) itemView.findViewById(R.id.imageView3);
+        txtContent = itemView.findViewById(R.id.textContentFriend);
+        avata = itemView.findViewById(R.id.imageView3);
     }
 }

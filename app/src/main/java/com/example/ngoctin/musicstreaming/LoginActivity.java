@@ -36,8 +36,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private static String TAG = "LoginActivity";
     FloatingActionButton fab;
-    private final Pattern VALID_EMAIL_ADDRESS_REGEX =
-            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+    private final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
     private EditText editTextUsername, editTextPassword;
     private LovelyProgressDialog waitingDialog;
 
@@ -119,7 +118,6 @@ public class LoginActivity extends AppCompatActivity {
         };
         waitingDialog = new LovelyProgressDialog(this).setCancelable(false);
     }
-
 
     private boolean validate(String emailStr, String password) {
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);

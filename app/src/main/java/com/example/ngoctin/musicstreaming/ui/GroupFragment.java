@@ -66,36 +66,37 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        onClickFloatButton = new FragGroupClickFloatButton();
+        listGroup = GroupDB.getInstance(getContext()).getListGroups();
+
+        progressDialog = new LovelyProgressDialog(getContext())
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_dialog_delete_group)
+                .setTitle("Deleting....")
+                .setTopColorRes(R.color.colorAccent);
+
+        waitingLeavingGroup = new LovelyProgressDialog(getContext())
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_dialog_delete_group)
+                .setTitle("Group leaving....")
+                .setTopColorRes(R.color.colorAccent);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_group, container, false);
-
-        listGroup = GroupDB.getInstance(getContext()).getListGroups();
         recyclerListGroups = layout.findViewById(R.id.recycleListGroup);
         mSwipeRefreshLayout = layout.findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setOnRefreshListener(this);
+
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         recyclerListGroups.setLayoutManager(layoutManager);
+
         adapter = new ListGroupsAdapter(getContext(), listGroup);
         recyclerListGroups.setAdapter(adapter);
-        onClickFloatButton = new FragGroupClickFloatButton();
-
-        progressDialog = new LovelyProgressDialog(getContext())
-        .setCancelable(false)
-        .setIcon(R.drawable.ic_dialog_delete_group)
-        .setTitle("Deleting....")
-        .setTopColorRes(R.color.colorAccent);
-
-        waitingLeavingGroup = new LovelyProgressDialog(getContext())
-        .setCancelable(false)
-        .setIcon(R.drawable.ic_dialog_delete_group)
-        .setTitle("Group leaving....")
-        .setTopColorRes(R.color.colorAccent);
 
         if(listGroup.size() == 0){
-            //Ket noi server hien thi group
+            // connect server and display group
             mSwipeRefreshLayout.setRefreshing(true);
             getListGroup();
         }
@@ -348,8 +349,8 @@ public class GroupFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     public class FragGroupClickFloatButton implements View.OnClickListener{
-
         Context context;
+
         public FragGroupClickFloatButton getInstance(Context context){
             this.context = context;
             return this;
