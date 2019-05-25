@@ -9,20 +9,16 @@ Chat and play youtube video
 * Play youtube video when chatting
 
 ## UI
-### Login screen
+### Login / Register account
 ![](images/Login.JPG)
-
-### Register account
 ![](images/Signup.JPG)
 
-### Add friend
+### Search Youtube video, chat screen
+![](images/Search.JPG)
+![](images/ChatSee.JPG)
 ![](images/AppFriend.JPG)
 
-### Search Youtube video
-![](images/Search.JPG)
 
-### Chat screen
-![](images/ChatSee.JPG)
 
 ## Author
 * **Tran Ngoc Tin - 1613575**
