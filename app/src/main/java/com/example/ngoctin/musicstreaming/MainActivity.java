@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         if(toolbar != null) {
             setSupportActionBar(toolbar);
-            getSupportActionBar().setTitle("Music Streaming");
+            getSupportActionBar().setTitle("Musicat");
         }
 
         viewPager = findViewById(R.id.viewpager);
